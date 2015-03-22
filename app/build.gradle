@@ -1,0 +1,30 @@
+apply plugin: 'com.android.application'
+apply from: "$rootProject.projectDir/gradle-scripts/project.gradle"
+apply plugin: "android-scala"
+
+android {
+
+    defaultConfig {
+        applicationId "com.anokmik.scala.sample"
+        multiDexEnabled true
+    }
+
+    packagingOptions {
+        exclude 'rootdoc.txt'
+    }
+
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:multidex:1.0.0'
+    compile "org.scala-lang:scala-library:2.11.4"
+    compile "org.macroid:macroid_2.11:2.0.0-M3"
+    compile "org.macroid:macroid-viewable_2.11:2.0.0-M3"
+    compile "org.macroid:macroid-akka-fragments_2.11:2.0.0-M3"
+    compile "com.fortysevendeg:macroid-extras_2.11:0.1.1"
+    compile 'de.sciss:fingertree_2.11:1.5.2'
+
+//    compile "org.scaloid:scaloid_2.11:3.6.1-10"
+//    compile "org.resolvable:resolvable_2.11:2.0.0-M6"
+}

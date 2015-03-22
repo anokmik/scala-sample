@@ -1,0 +1,48 @@
+import java.text.SimpleDateFormat
+
+def gitSha() {
+    return 'git rev-parse --short HEAD'.execute().text.trim()
+}
+
+def buildTime() {
+    def df = new SimpleDateFormat("yyyy_MM_dd")
+    df.setTimeZone(TimeZone.getTimeZone("UTC"))
+    return df.format(new Date())
+}
+
+def versionMajor = 0
+def versionMinor = 1
+def versionPatch = 0
+def versionBuild  = 0
+def versionSuffix = "${gitSha()}-${buildTime()}"
+
+android {
+
+    defaultConfig {
+        versionCode versionMajor * 1000000 + versionMinor * 100000 + versionPatch * 10000 + versionBuild 
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}.${versionBuild }"
+    }
+
+    buildTypes {
+
+        debug {
+            versionNameSuffix "-${versionSuffix}"
+        }
+
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def buildName = "${variant.mergedFlavor.applicationId}-${variant.mergedFlavor.versionName}-${variant.buildType.name}-${versionSuffix}"
+            def alignedOutputFile = output.outputFile
+            def unalignedOutputFile = output.packageApplication.outputFile
+
+            if (variant.buildType.zipAlignEnabled) {
+                output.outputFile = new File(alignedOutputFile.parent, buildName + ".apk")
+            }
+            output.packageApplication.outputFile = new File(unalignedOutputFile.parent, buildName + "-unaligned" + ".apk")
+        }
+
+    }
+
+}
